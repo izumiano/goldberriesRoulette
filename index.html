@@ -1,17 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-	<div class="centerChildren">
-		<header>Goldberries Roulette</header>
-		<button class="midButton" id="rouletteButton" disabled onclick="rollRoulette()">Grabbing Goldens From Goldberries</button>
-	</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="centerChildren">
+      <header>Goldberries Roulette</header>
+      <button
+        class="midButton"
+        id="rouletteButton"
+        disabled
+        onclick="rollRoulette()"
+      >
+        Grabbing Goldens From Goldberries
+      </button>
 
-	<script src="main.js"></script>
-</body>
+      <div id="tierDropdown" class="dropdownMultiSelect">
+        <button class="anchor" onclick="setTierDropdownPopoverWidth()" popovertarget="tierDropdownPopup">
+          Select Tiers
+        </button>
+				<ul popover id="tierDropdownPopup">
+					<li><input type="button" value="Standard" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 7" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 6" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 5" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 4" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 3" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 2" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 1" onclick="selectInDropdown.call(this)"/></li>
+					<li><input type="button" value="Tier 0" onclick="selectInDropdown.call(this)"/></li>
+				</ul>
+      </div>
+
+			<div class="mapInfoContainer">
+				<p id="campaignName"></p>
+				<p id="mapName"></p>
+				<p id="mapSegment"></p>
+				<p id="mapTier"></p>
+			</div>
+
+    </div>
+
+    <script src="main.js"></script>
+  </body>
 </html>

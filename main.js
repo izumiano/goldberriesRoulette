@@ -30,13 +30,27 @@ function disableButton(button) {
 }
 
 function rollRoulette() {
-	const keys = Object.keys(goldenList);
-	const randomKey = keys[getRandomInt(0, keys.length - 1)];
-	console.log(randomKey);
-	console.log(getRandomInt(2, 5));
-	const tier = goldenList[randomKey];
-	const randomMap = tier[getRandomInt(0, tier.length - 1)];
-	console.log(randomMap.name);
+	if (rouletteButton.disabled) return;
+
+  let mapsToRoll = [];
+
+  selectedTiers.forEach((tier) => {
+    if (tier in goldenList) {
+      mapsToRoll = mapsToRoll.concat(goldenList[tier]);
+    } else {
+      console.error(tier + " is not in goldenList");
+    }
+  });
+	
+	if (mapsToRoll.length <= 0) return;
+
+	const randomMap = mapsToRoll[getRandomInt(0, mapsToRoll.length - 1)];
+	campaignNameObject.innerText = randomMap.name === randomMap.campaignName ? "" : randomMap.campaignName;
+	mapNameObject.innerText = randomMap.name;
+	mapSegmentObject.innerText = randomMap.challenges[0].label !== null ? randomMap.challenges[0].label : "";
+	mapTierObject.innerText = randomMap.challenges[0].difficulty.name;
+
+	console.log(randomMap);
 }
 
 function getGoldenListFromCampaigns(campaigns) {
@@ -59,6 +73,7 @@ function getGoldenListFromCampaigns(campaigns) {
 				const tierName = challenge.difficulty.name;
 				const mapClone = structuredClone(map);
 				mapClone.challenges = [challenge];
+				mapClone.campaignName = campaign.name;
 				list[tierName].push(mapClone);
 			})
 		})
@@ -66,10 +81,40 @@ function getGoldenListFromCampaigns(campaigns) {
 	return list;
 }
 
+function setTierDropdownPopoverWidth() {
+	tierDropdownPopup.style.minWidth = tierDropdown.getBoundingClientRect().width + "px";
+}
+
+function selectInDropdown() {
+	const button = this;
+
+	if (button.classList.contains("selected")) {
+		button.classList.remove("selected");
+		selectedTiers = selectedTiers.filter(value => value !== button.value);
+	}
+	else {
+		button.classList.add("selected");
+		selectedTiers.push(button.value);
+	}
+
+	console.log(selectedTiers);
+}
+
 const rouletteButton = document.getElementById("rouletteButton");
+
+const tierDropdown = document.getElementById("tierDropdown");
+const tierDropdownPopup = document.getElementById("tierDropdownPopup");
+
+const campaignNameObject = document.getElementById("campaignName");
+const mapNameObject = document.getElementById("mapName");
+const mapSegmentObject = document.getElementById("mapSegment");
+const mapTierObject = document.getElementById("mapTier");
+
+addEventListener("resize", _ => setTierDropdownPopoverWidth());
 
 let goldenList = null;
 let campaignList = [];
+let selectedTiers = [];
 
 request("https://goldberries.net/api/lists/golden-list?archived=true&arbitrary=true")
 	.then(value => {
