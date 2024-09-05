@@ -91,14 +91,16 @@ header {
   overflow-x: hidden;
 }
 
-.dropdownMultiSelect {
-  color: var(--col-text);
+.noDoubleClickZoom{
+	touch-action: manipulation;
 }
 
 .dropdownMultiSelect{
+	color: var(--col-text);
 	margin-top: 5px;
 	border: 0;
 	padding: 0;
+	touch-action: manipulation;
 }
 
 .dropdownMultiSelect > .anchor{

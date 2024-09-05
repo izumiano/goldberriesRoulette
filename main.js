@@ -32,25 +32,48 @@ function disableButton(button) {
 function rollRoulette() {
 	if (rouletteButton.disabled) return;
 
-  let mapsToRoll = [];
-
-  selectedTiers.forEach((tier) => {
-    if (tier in goldenList) {
-      mapsToRoll = mapsToRoll.concat(goldenList[tier]);
-    } else {
-      console.error(tier + " is not in goldenList");
-    }
-  });
+  let mapsToRoll = getMapsToRoll(selectedTiers, goldenList);
 	
 	if (mapsToRoll.length <= 0) return;
 
 	const randomMap = mapsToRoll[getRandomInt(0, mapsToRoll.length - 1)];
 	campaignNameObject.innerText = randomMap.name === randomMap.campaignName ? "" : randomMap.campaignName;
-	mapNameObject.innerText = randomMap.name;
-	mapSegmentObject.innerText = randomMap.challenges[0].label !== null ? randomMap.challenges[0].label : "";
-	mapTierObject.innerText = randomMap.challenges[0].difficulty.name;
+	const challenge = randomMap.challenges[0]
+	mapNameObject.innerHTML =
+    "<a href='https://www.goldberries.net/challenge/" + challenge.id + "' target='_blank' rel='noopener noreferrer'>" +
+    randomMap.name +
+    (challenge.requires_fc ? " [FC]" : "") +
+    "</a>";
+	mapSegmentObject.innerText = challenge.label !== null ? challenge.label : "";
+	mapTierObject.innerText = challenge.difficulty.name;
 
 	console.log(randomMap);
+}
+
+function getMapsToRoll(tiers, tierSortedMaps) {
+	if (tiers.length <= 0) {
+		tiers = [
+			"Tier 0",
+			"Tier 1",
+			"Tier 2",
+			"Tier 3",
+			"Tier 4",
+			"Tier 5",
+			"Tier 6",
+			"Tier 7",
+			"Standard",
+		]
+	}
+
+	let mapsToRoll = [];
+	tiers.forEach((tier) => {
+    if (tier in tierSortedMaps) {
+      mapsToRoll = mapsToRoll.concat(tierSortedMaps[tier]);
+    } else {
+      console.error(tier + " is not in goldenList");
+    }
+	});
+	return mapsToRoll;
 }
 
 function getGoldenListFromCampaigns(campaigns) {
