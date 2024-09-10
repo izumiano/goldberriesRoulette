@@ -1,5 +1,5 @@
 :root {
-  --col-background: #0b050f;
+  --col-background: #261333;
   --col-text: #f2ecf9;
   --col-primary: #7d3abb;
   --col-secondary: #851a5a;
@@ -22,7 +22,7 @@ header {
   font-size: clamp(4rem, 5dvw, 6rem);
   color: var(--col-text);
   font-weight: bold;
-  text-shadow: 0px 0px 10px var(--col-accent);
+  text-shadow: 0px 0px 100px var(--col-accent);
 }
 
 .border {
@@ -49,13 +49,11 @@ header {
   display: none;
 }
 
-.centerChildren > * {
-	max-width: fit-content;
-	margin: 0 auto;
-}
-
-.centerChildren button{
-	display: block;
+.centerChildren{
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .centerAlign {
@@ -91,8 +89,36 @@ header {
   overflow-x: hidden;
 }
 
+.pixelated {
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -o-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	-ms-interpolation-mode: nearest-neighbor;
+	image-rendering: pixelated;
+}
+
 .noDoubleClickZoom{
 	touch-action: manipulation;
+}
+
+.spinner{
+	--size: 2rem;
+	content: "";
+	max-width: var(--size);
+	width: var(--size);
+	height: var(--size);
+	border: solid white;
+	border: solid rgb(from var(--col-text) calc(r * 0.8) calc(g * 0.8) calc(b * 0.8));
+	border-right: solid var(--col-text);
+	border-radius: var(--size);
+
+	animation: fullRotation 1s infinite linear;
+}
+
+@keyframes fullRotation {
+	to{
+		transform: rotateZ(360deg);
+	}
 }
 
 .dropdownMultiSelect{
@@ -174,3 +200,93 @@ header {
  font-size: 1rem;
  text-align: center;
 }
+
+.rouletteContainer{
+	--wheelRadius: 17rem;
+	--childRotation: 10deg;
+	--borderWidth: 4px;
+	width: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
+	height: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
+	border: var(--col-text) solid var(--borderWidth);
+	border-radius: 50%;
+	margin: 0;
+	margin-top: 5px;
+	padding: 0;
+	background-image: repeating-conic-gradient(from calc(var(--childRotation) / 2),
+		var(--col-primary) 0%,
+		var(--col-primary) var(--childRotation),
+		var(--col-secondary) var(--childRotation),
+		var(--col-secondary) calc(var(--childRotation) * 2),
+		var(--col-background) calc(var(--childRotation) * 2),
+		var(--col-background) calc(var(--childRotation) * 3));
+	animation: fullRotation 20s linear infinite;
+}
+
+.rouletteContainer > div{
+	--centerRadius: 50px;
+	position: absolute;
+	background-color: var(--col-primary);
+	border: solid 2px;
+	width: calc(2 * var(--centerRadius));
+	height: calc(2 * var(--centerRadius));
+	border-radius: 50%;
+
+	display: flex;
+  justify-content: center;
+  align-items: center;
+	
+	transform: 
+						translateX(calc(
+							 var(--wheelRadius) - var(--borderWidth) - 50%
+						))
+						translateY(calc(
+							 var(--wheelRadius) - var(--borderWidth) - 50%
+						));
+}
+
+.rouletteContainer > div > *{
+  margin: auto;
+	/* position: absolute;
+	transform: 
+						translateX(calc(
+							 var(--centerRadius) - 50%
+						))
+						translateY(calc(
+							 var(--centerRadius) - 50%
+						)); */
+}
+
+.rouletteContainer > div > img{
+	aspect-ratio: 9 / 8;
+	width: 90px;
+	transform: 
+						translateY(calc(
+							 7px
+						));
+}
+
+.rouletteContainer > p{
+	background-color: red;
+	font-size: 40px;
+	width: 0;
+	white-space: nowrap;
+	margin: 0;
+	--nth-child: 0;
+	--scale: 0.95;
+	position: absolute;
+	text-align: start;
+	transform:
+							translateX(calc(
+								sin(var(--childRotation) * var(--nth-child)) * var(--wheelRadius) * var(--scale) + var(--wheelRadius) - var(--borderWidth)
+							))
+							translateY(calc(
+								cos(var(--childRotation) * var(--nth-child)) * var(--wheelRadius) * var(--scale) * -1 + var(--wheelRadius) - var(--borderWidth) - 50%
+							))
+							rotate(calc(var(--childRotation) * var(--nth-child) + 90deg));
+}
+
+/* .rouletteContainer > p::before{
+	position: absolute;
+	content: "";
+	border: white solid;
+} */

@@ -9,14 +9,14 @@
   <body>
     <div class="centerChildren">
       <header>Goldberries Roulette</header>
-      <button
+      <!-- <button
         class="midButton noDoubleClickZoom"
         id="rouletteButton"
         disabled
         onclick="rollRoulette()"
       >
-        Grabbing Goldens From Goldberries
-      </button>
+        <div class="spinner"></div>
+      </button> -->
 
       <div id="tierDropdown" class="dropdownMultiSelect">
         <button class="anchor" onclick="setTierDropdownPopoverWidth()" popovertarget="tierDropdownPopup">
@@ -35,7 +35,14 @@
 				</ul>
       </div>
 
-			<div class="mapInfoContainer">
+			<div class="rouletteContainer" id="rouletteContainer" onclick="rollRoulette()">
+				<div>
+					<div id="rouletteLoadIcon" class="spinner"></div>
+					<img src="https://goldberries.net/icons/goldenberry.png" alt="goldberry" class="pixelated hidden" id="goldberryImg">
+				</div>
+			</div>
+
+			<div class="mapInfoContainer"></div>
 				<p id="campaignName"></p>
 				<p id="mapName"></p>
 				<p id="mapSegment"></p>
