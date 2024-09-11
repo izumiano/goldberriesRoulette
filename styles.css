@@ -276,9 +276,3 @@ header {
 							))
 							rotate(calc(var(--childRotation) * var(--nth-child) + 90deg));
 }
-
-/* .rouletteContainer > p::before{
-	position: absolute;
-	content: "";
-	border: white solid;
-} */
