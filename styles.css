@@ -246,14 +246,6 @@ header {
 
 .rouletteContainer > div > *{
   margin: auto;
-	/* position: absolute;
-	transform: 
-						translateX(calc(
-							 var(--centerRadius) - 50%
-						))
-						translateY(calc(
-							 var(--centerRadius) - 50%
-						)); */
 }
 
 .rouletteContainer > div > img{
