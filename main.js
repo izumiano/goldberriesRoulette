@@ -211,7 +211,7 @@ function addMapsToRoulette() {
 			
 			rouletteContainer.appendChild(p);
 			p.style = "--nth-child: " + count;
-			resizeFontToFit(p, remToPx(15) - 70, 20 * Math.PI * 15 / challengeCount);
+			resizeFontToFit(p, remToPx(15) - 70, 1.8 * Math.PI * remToPx(15) / challengeCount);
 			count++;
 		})
 	});
