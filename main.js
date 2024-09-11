@@ -141,10 +141,10 @@ function resizeFontToFit(htmlObj, width, height) {
 }
 
 function addMapsToRoulette() {
-	const shallowChildrenCopy = [...rouletteContainer.children];
+	const shallowChildrenCopy = [...rouletteTextContainer.children];
 	for (const child of shallowChildrenCopy) {
     if (child.tagName === "P") {
-      rouletteContainer.removeChild(child);
+      rouletteTextContainer.removeChild(child);
     }
   }
 
@@ -193,9 +193,10 @@ function addMapsToRoulette() {
 
 	let challengeCount = 0;
 	maps.forEach(map => {
-		map.challenges.forEach(_ => {
-			challengeCount++;
-		})
+		// map.challenges.forEach(_ => {
+		// 	challengeCount++;
+		// })
+		challengeCount += map.challenges.length
 	});
 
 	let count = 0;
@@ -209,19 +210,23 @@ function addMapsToRoulette() {
 			// + challenge.difficulty.name;
 			
 			
-			rouletteContainer.appendChild(p);
+			rouletteTextContainer.appendChild(p);
 			p.style = "--nth-child: " + count;
-			resizeFontToFit(p, remToPx(15) - 70, 1.8 * Math.PI * remToPx(15) / challengeCount);
+			resizeFontToFit(p, 240 - 70, 1.8 * Math.PI * 240 / challengeCount); // 240 is remToPx(15)
 			count++;
 		})
 	});
-	rouletteContainer.style = "--childRotation: " + (challengeCount !== 0 ? 360 / challengeCount : 10) + "deg";
+	rouletteWheel.style =
+    "--childRotation: " +
+    (challengeCount !== 0 ? 360 / challengeCount : 10) +
+    "deg";
 }
 
 //--------------------
 
 const rouletteContainer = document.getElementById("rouletteContainer");
-const rouletteLoadIcon = document.getElementById("rouletteLoadIcon");
+const rouletteTextContainer = document.getElementById("rouletteTextContainer");
+const rouletteWheel = document.getElementById("rouletteWheel");
 const goldberryImg = document.getElementById("goldberryImg");
 
 const tierDropdown = document.getElementById("tierDropdown");
@@ -240,25 +245,17 @@ let selectedTiers = [];
 
 setTierDropdownPopoverWidth();
 addEventListener("resize", (_) => setTierDropdownPopoverWidth());
-
-// let count = 1;
-// rouletteContainer.style = "--childRotation: " + 360/count + "deg";
-// for (let i = 0; i < count; i++){
-// 	const p = document.createElement("p");
-// 	p.innerHTML = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-// 	rouletteContainer.appendChild(p);
-// 	p.style = "--nth-child: " + i;
-// 	resizeFontToFit(p, remToPx(15) / 4);
-// }
-
-// addMapsToRoulette();
+rouletteWheel.addEventListener("animationend", (event) => {
+  if (event.animationName === "spinnerToRoulette") {
+		rouletteWheel.classList.add("rouletteWheel");
+  }
+});
 
 request("https://goldberries.net/api/lists/golden-list?archived=true&arbitrary=true")
 	.then(value => {
 		campaignList = value;
 		goldenList = getGoldenListFromCampaigns(campaignList);
-		rouletteLoadIcon.classList.add("hidden");
-		goldberryImg.classList.remove("hidden");
+		rouletteWheel.classList.add("spinnerToRoulette");
 		addMapsToRoulette();
 	})
 	.catch(err => {

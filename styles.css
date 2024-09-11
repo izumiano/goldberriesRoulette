@@ -49,6 +49,16 @@ header {
   display: none;
 }
 
+.appear{
+	animation: appear 1s linear forwards;
+}
+
+@keyframes appear {
+	to{
+		opacity: 1;
+	}
+}
+
 .centerChildren{
 	display: flex;
 	flex-flow: column;
@@ -101,16 +111,19 @@ header {
 	touch-action: manipulation;
 }
 
+.clear{
+	opacity: 0;
+}
+
 .spinner{
 	--size: 2rem;
 	content: "";
 	max-width: var(--size);
 	width: var(--size);
 	height: var(--size);
-	border: solid white;
 	border: solid rgb(from var(--col-text) calc(r * 0.8) calc(g * 0.8) calc(b * 0.8));
-	border-right: solid var(--col-text);
-	border-radius: var(--size);
+	border-top: solid var(--col-text);
+	border-radius: 50%;
 
 	animation: fullRotation 1s infinite linear;
 }
@@ -205,24 +218,71 @@ header {
 	--wheelRadius: 17rem;
 	--childRotation: 10deg;
 	--borderWidth: 4px;
-	width: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
-	height: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
-	border: var(--col-text) solid var(--borderWidth);
-	border-radius: 50%;
 	margin: 0;
 	margin-top: 5px;
 	padding: 0;
-	background-image: repeating-conic-gradient(from calc(var(--childRotation) / 2),
-		var(--col-primary) 0%,
-		var(--col-primary) var(--childRotation),
-		var(--col-secondary) var(--childRotation),
-		var(--col-secondary) calc(var(--childRotation) * 2),
-		var(--col-background) calc(var(--childRotation) * 2),
-		var(--col-background) calc(var(--childRotation) * 3));
 	animation: fullRotation 20s linear infinite;
+	width: calc(var(--wheelRadius) * 2);
+	height: calc(var(--wheelRadius) * 2);
 }
 
-.rouletteContainer > div{
+.rouletteContainer > .rouletteWheel{
+	border-radius: 50%;
+	background-image: repeating-conic-gradient(from calc(var(--childRotation) / 2),
+		hsl(from var(--col-primary) h s l) 0%,
+		hsl(from var(--col-primary) h s l) var(--childRotation),
+		hsl(from var(--col-secondary) h s l) var(--childRotation),
+		hsl(from var(--col-secondary) h s l) calc(var(--childRotation) * 2),
+		hsl(from var(--col-background) h s l) calc(var(--childRotation) * 2),
+		hsl(from var(--col-background) h s l) calc(var(--childRotation) * 3));
+}
+
+.rouletteContainer > .spinnerToRoulette{
+	display: flex;
+	background-image: repeating-conic-gradient(from calc(var(--childRotation) / 2),
+		hsl(from var(--col-primary) h s l) 0%,
+		hsl(from var(--col-primary) h s l) var(--childRotation),
+		hsl(from var(--col-secondary) h s l) var(--childRotation),
+		hsl(from var(--col-secondary) h s l) calc(var(--childRotation) * 2),
+		hsl(from var(--col-background) h s l) calc(var(--childRotation) * 2),
+		hsl(from var(--col-background) h s l) calc(var(--childRotation) * 3));
+	animation: 
+		fillSpinner 0.3s linear forwards,
+		spinnerToRoulette 0.4s linear forwards;
+}
+
+@keyframes fillSpinner{
+	0%{
+		clip-path: polygon(0 0, 50% 50%, 100% 0%, 100% 0%, 100% 0%, 100% 0);
+	}
+	33.3%{
+		clip-path: polygon(0 0, 50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 0);
+	}
+	66.6%{
+		clip-path: polygon(0 0, 50% 50%, 0 100%, 0 100%, 100% 100%, 100% 0);
+	}
+	100%{
+		clip-path: polygon(0 0, 50% 50%, 0 0, 0 100%, 100% 100%, 100% 0);
+	}
+}
+
+@keyframes spinnerToRoulette {
+	80%{
+		transform: scale(1.6);
+	}
+	100%{
+		max-width: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
+		width: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
+		height: calc((var(--wheelRadius) - var(--borderWidth)) * 2);
+		border: var(--col-text) solid var(--borderWidth);
+	}
+}
+
+.rouletteContainer > .rouletteWheel > .innerCircle{
+	animation: appear 0.5s linear forwards;
+}
+
+.rouletteContainer > .spinnerToRoulette > .innerCircle{
 	--centerRadius: 50px;
 	position: absolute;
 	background-color: var(--col-primary);
@@ -230,25 +290,21 @@ header {
 	width: calc(2 * var(--centerRadius));
 	height: calc(2 * var(--centerRadius));
 	border-radius: 50%;
-
 	display: flex;
-  justify-content: center;
-  align-items: center;
+	align-self: center;
+	margin: auto;
 	
 	transform: 
 						translateX(calc(
-							 var(--wheelRadius) - var(--borderWidth) - 50%
-						))
-						translateY(calc(
-							 var(--wheelRadius) - var(--borderWidth) - 50%
+							var(--wheelRadius) - var(--borderWidth) - 50%
 						));
 }
 
-.rouletteContainer > div > *{
+.rouletteContainer > .spinnerToRoulette > .innerCircle > *{
   margin: auto;
 }
 
-.rouletteContainer > div > img{
+.rouletteContainer > .spinnerToRoulette > .innerCircle > img{
 	aspect-ratio: 9 / 8;
 	width: 90px;
 	transform: 
@@ -257,22 +313,26 @@ header {
 						));
 }
 
-.rouletteContainer > p{
+.rouletteContainer > .rouletteWheel > .textContainer{
+	animation: appear 0.5s linear forwards;
+}
+
+.rouletteContainer > .spinnerToRoulette > .textContainer > p{
 	background-color: red;
-	font-size: 40px;
+	font-size: 20px;
 	width: 0;
 	white-space: nowrap;
 	margin: 0;
 	--nth-child: 0;
-	--scale: 0.95;
+	--scale: 0.97;
 	position: absolute;
 	text-align: start;
 	transform:
 							translateX(calc(
-								sin(var(--childRotation) * var(--nth-child)) * var(--wheelRadius) * var(--scale) + var(--wheelRadius) - var(--borderWidth)
+								sin(var(--childRotation) * var(--nth-child)) * (var(--wheelRadius) - var(--borderWidth)) * var(--scale) + var(--wheelRadius) - var(--borderWidth)
 							))
 							translateY(calc(
-								cos(var(--childRotation) * var(--nth-child)) * var(--wheelRadius) * var(--scale) * -1 + var(--wheelRadius) - var(--borderWidth) - 50%
+								cos(var(--childRotation) * var(--nth-child)) * (var(--wheelRadius) - var(--borderWidth)) * var(--scale) * -1 + var(--wheelRadius) - var(--borderWidth) - 50%
 							))
 							rotate(calc(var(--childRotation) * var(--nth-child) + 90deg));
 }
