@@ -9,34 +9,44 @@
   <body>
     <div class="centerChildren">
       <header>Goldberries Roulette</header>
-      <!-- <button
-        class="midButton noDoubleClickZoom"
-        id="rouletteButton"
-        disabled
-        onclick="rollRoulette()"
-      >
-        <div class="spinner"></div>
-      </button> -->
 
       <div id="tierDropdown" class="dropdownMultiSelect">
         <button class="anchor" onclick="setTierDropdownPopoverWidth()" popovertarget="tierDropdownPopup">
           Select Tiers
         </button>
 				<ul popover id="tierDropdownPopup">
-					<li><input type="button" value="Standard" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 7" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 6" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 5" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 4" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 3" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 2" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 1" onclick="selectInDropdown.call(this)"/></li>
-					<li><input type="button" value="Tier 0" onclick="selectInDropdown.call(this)"/></li>
+					<li data-tier="Standard">
+						<input type="button" value="Standard" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 7">
+						<input type="button" value="Tier 7" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 6">
+						<input type="button" value="Tier 6" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 5">
+						<input type="button" value="Tier 5" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 4">
+						<input type="button" value="Tier 4" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 3">
+						<input type="button" value="Tier 3" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 2">
+						<input type="button" value="Tier 2" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 1">
+						<input type="button" value="Tier 1" onclick="selectInDropdown.call(this)"/>
+					</li>
+					<li data-tier="Tier 0">
+						<input type="button" value="Tier 0" onclick="selectInDropdown.call(this)"/>
+					</li>
 				</ul>
       </div>
 
 			<div class="rouletteContainer centerChildren" id="rouletteContainer">
-				<div class="spinner" id="rouletteWheel">
+				<div class="spinner" id="rouletteWheel" onclick="rollRoulette()">
 					<div class="innerCircle clear">
 						<img src="https://goldberries.net/icons/goldenberry.png" alt="goldberry" class="pixelated">
 					</div>

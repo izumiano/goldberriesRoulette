@@ -4,6 +4,7 @@
   --col-primary: #7d3abb;
   --col-secondary: #851a5a;
   --col-accent: #246496;
+	--col-goldberry: #c1a725;
 }
 
 body {
@@ -186,8 +187,15 @@ header {
 	max-height: calc(4 * (1rem + 10px) + 30px);
 }
 
-.dropdownMultiSelect > ul > li {
-	min-width: 100%;
+.dropdownMultiSelect > ul > li > div{
+	--border-width: 2px;
+	content: "";
+	position: absolute;
+	width: var(--progress);
+	height: var(--bottom-border-radius);
+	border-bottom: 2px var(--col-goldberry) solid;
+
+	transform: translateY(calc(var(--border-width) * -1));
 }
 
 .dropdownMultiSelect > ul > li > input {
@@ -199,6 +207,7 @@ header {
 	border: none;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	border-radius: 0;
 }
 
 .dropdownMultiSelect > ul > li > input:hover {

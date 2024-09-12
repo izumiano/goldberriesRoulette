@@ -121,6 +121,8 @@ function selectInDropdown() {
 		selectedTiers.push(button.value);
 	}
 
+	tierSortedLoadingBars[button.value].style.width = "0";
+
 	addMapsToRoulette()
 
 	console.log(selectedTiers);
@@ -140,8 +142,39 @@ function resizeFontToFit(htmlObj, width, height) {
 	htmlObj.style.width = styleWidth;
 }
 
+function addTierSortedLoadingBars() {
+	const tierSortedLoadingBars = {};
+	
+	for (child of tierDropdownPopup.children) {
+		const div = document.createElement("div")
+		child.appendChild(div);
+		tierSortedLoadingBars[child.dataset.tier] = div;
+	}
+	return tierSortedLoadingBars;
+}
+
+function setTierSortedProgress(progress, selectedTiers) {
+	selectedTiers.forEach((tier) => {
+		tierSortedProgress[tier] = progress;
+		tierSortedLoadingBars[tier].style.width = progress === 1 ? "0" : progress * 100 + "%";
+  });
+}
+
 let chunkTimeoutIDs = [];
-function addMapChunksToRoulette(maps, challengeCount) {
+const tierSortedProgress = {
+  "Tier 0": 0,
+  "Tier 1": 0,
+  "Tier 2": 0,
+  "Tier 3": 0,
+  "Tier 4": 0,
+  "Tier 5": 0,
+  "Tier 6": 0,
+  "Tier 7": 0,
+  "Standard": 0,
+  "Undetermined": 0,
+  "Trivial": 0,
+};
+function addMapChunksToRoulette(maps, selectedTiers, challengeCount) {
 	const chunk = 20;
 	let count = 0;
   (function loop(i) {
@@ -163,7 +196,10 @@ function addMapChunksToRoulette(maps, challengeCount) {
         resizeFontToFit(p, 240 - 70, (1.8 * Math.PI * 240) / challengeCount); // 240 is remToPx(15)
         count++;
       }
-    });
+		});
+		
+		setTierSortedProgress(count / challengeCount, selectedTiers);
+
     chunkTimeoutIDs.push(setTimeout(loop.bind(null, i + chunk)));
   })(0);
 }
@@ -229,41 +265,9 @@ function addMapsToRoulette() {
 		challengeCount += map.challenges.length
 	});
 
-	addMapChunksToRoulette(maps, challengeCount);
-	// let count = 0;
-	// for (const map of maps) {
-	// 	for (const challenge of map.challenges) {
-  //     let p = document.createElement("p");
-  //     p.innerHTML =
-  //       map.name +
-  //       (challenge.requires_fc ? " [FC]" : "") +
-  //       " " +
-  //       (challenge.label !== null ? "[" + challenge.label + "]" : "") +
-  //       " ";
-  //     // + challenge.difficulty.name;
+	addMapChunksToRoulette(maps, selectedTiers, challengeCount);
 
-  //     rouletteTextContainer.appendChild(p);
-  //     p.style = "--nth-child: " + count;
-  //     resizeFontToFit(p, 240 - 70, (1.8 * Math.PI * 240) / challengeCount); // 240 is remToPx(15)
-  //     count++;
-  //   }
-	// }
-	// maps.forEach(map => {
-	// 	map.challenges.forEach(challenge => {
-	// 		let p = document.createElement("p");
-	// 		p.innerHTML =
-	// 			map.name +
-	// 			(challenge.requires_fc ? " [FC]" : "") + " "
-	// 			+ (challenge.label !== null ? "[" + challenge.label + "]" : "") + " "
-	// 		// + challenge.difficulty.name;
-			
-			
-	// 		rouletteTextContainer.appendChild(p);
-	// 		p.style = "--nth-child: " + count;
-	// 		resizeFontToFit(p, 240 - 70, 1.8 * Math.PI * 240 / challengeCount); // 240 is remToPx(15)
-	// 		count++;
-	// 	})
-	// });
+	console.log(challengeCount !== 0 ? 360 / challengeCount : 10);
 	rouletteWheel.style =
     "--childRotation: " +
     (challengeCount !== 0 ? 360 / challengeCount : 10) +
@@ -284,6 +288,8 @@ const campaignNameObject = document.getElementById("campaignName");
 const mapNameObject = document.getElementById("mapName");
 const mapSegmentObject = document.getElementById("mapSegment");
 const mapTierObject = document.getElementById("mapTier");
+
+const tierSortedLoadingBars = addTierSortedLoadingBars();
 
 let goldenList = null;
 let campaignList = [];
