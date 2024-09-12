@@ -224,6 +224,7 @@ header {
 	animation: fullRotation 20s linear infinite;
 	width: calc(var(--wheelRadius) * 2);
 	height: calc(var(--wheelRadius) * 2);
+	border-radius: 50%;
 }
 
 .rouletteContainer > .rouletteWheel{

@@ -140,7 +140,40 @@ function resizeFontToFit(htmlObj, width, height) {
 	htmlObj.style.width = styleWidth;
 }
 
+let chunkTimeoutIDs = [];
+function addMapChunksToRoulette(maps, challengeCount) {
+	const chunk = 20;
+	let count = 0;
+  (function loop(i) {
+    if (i >= maps.length) return; // all done
+    maps.slice(i, i + chunk).forEach((map) => {
+			for (let j = 0; j < map.challenges.length; j++) {
+				const challenge = map.challenges[j];
+        const p = document.createElement("p");
+        p.innerHTML =
+          map.name +
+          (challenge.requires_fc ? " [FC]" : "") +
+          " " +
+          (challenge.label !== null ? "[" + challenge.label + "]" : "") +
+          " ";
+        // + challenge.difficulty.name;
+
+        rouletteTextContainer.appendChild(p);
+        p.style = "--nth-child: " + count;
+        resizeFontToFit(p, 240 - 70, (1.8 * Math.PI * 240) / challengeCount); // 240 is remToPx(15)
+        count++;
+      }
+    });
+    chunkTimeoutIDs.push(setTimeout(loop.bind(null, i + chunk)));
+  })(0);
+}
+
 function addMapsToRoulette() {
+	chunkTimeoutIDs.forEach(id => {
+		clearTimeout(id);
+	})
+	chunkTimeoutIDs = [];
+
 	const shallowChildrenCopy = [...rouletteTextContainer.children];
 	for (const child of shallowChildrenCopy) {
     if (child.tagName === "P") {
@@ -193,29 +226,44 @@ function addMapsToRoulette() {
 
 	let challengeCount = 0;
 	maps.forEach(map => {
-		// map.challenges.forEach(_ => {
-		// 	challengeCount++;
-		// })
 		challengeCount += map.challenges.length
 	});
 
-	let count = 0;
-	maps.forEach(map => {
-		map.challenges.forEach(challenge => {
-			let p = document.createElement("p");
-			p.innerHTML =
-				map.name +
-				(challenge.requires_fc ? " [FC]" : "") + " "
-				+ (challenge.label !== null ? "[" + challenge.label + "]" : "") + " "
-			// + challenge.difficulty.name;
+	addMapChunksToRoulette(maps, challengeCount);
+	// let count = 0;
+	// for (const map of maps) {
+	// 	for (const challenge of map.challenges) {
+  //     let p = document.createElement("p");
+  //     p.innerHTML =
+  //       map.name +
+  //       (challenge.requires_fc ? " [FC]" : "") +
+  //       " " +
+  //       (challenge.label !== null ? "[" + challenge.label + "]" : "") +
+  //       " ";
+  //     // + challenge.difficulty.name;
+
+  //     rouletteTextContainer.appendChild(p);
+  //     p.style = "--nth-child: " + count;
+  //     resizeFontToFit(p, 240 - 70, (1.8 * Math.PI * 240) / challengeCount); // 240 is remToPx(15)
+  //     count++;
+  //   }
+	// }
+	// maps.forEach(map => {
+	// 	map.challenges.forEach(challenge => {
+	// 		let p = document.createElement("p");
+	// 		p.innerHTML =
+	// 			map.name +
+	// 			(challenge.requires_fc ? " [FC]" : "") + " "
+	// 			+ (challenge.label !== null ? "[" + challenge.label + "]" : "") + " "
+	// 		// + challenge.difficulty.name;
 			
 			
-			rouletteTextContainer.appendChild(p);
-			p.style = "--nth-child: " + count;
-			resizeFontToFit(p, 240 - 70, 1.8 * Math.PI * 240 / challengeCount); // 240 is remToPx(15)
-			count++;
-		})
-	});
+	// 		rouletteTextContainer.appendChild(p);
+	// 		p.style = "--nth-child: " + count;
+	// 		resizeFontToFit(p, 240 - 70, 1.8 * Math.PI * 240 / challengeCount); // 240 is remToPx(15)
+	// 		count++;
+	// 	})
+	// });
 	rouletteWheel.style =
     "--childRotation: " +
     (challengeCount !== 0 ? 360 / challengeCount : 10) +
