@@ -23,6 +23,59 @@ function remToPx(rem) {
 	return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
+function easeOutQuart(x) {
+  return 1 - Math.pow(1 - x, 4);
+}
+
+function easeInOutQuad(x) {
+  return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+}
+
+function easeOutSine(x) {
+  return Math.sin((x * Math.PI) / 2);
+}
+
+function easeInOutSine(x) {
+  return -(Math.cos(Math.PI * x) - 1) / 2;
+}
+
+let rouletteRotationInterval = null;
+let rouletteT = 0;
+function startRouletteRotation(
+  duration = null,
+	speed = 0.1,
+	callback = () => { },
+  easingFunction = t => {return t;}
+) {
+  stopRouletteRotation();
+
+	const millisecondTimeout = 4;
+
+	const actualDuration = duration;
+	duration ??= 1;
+
+  rouletteT = 0;
+  const initalRouletteAngle = rouletteAngle;
+	rouletteRotationInterval = setInterval(() => {
+    const angle = easingFunction(rouletteT) * duration * 360 + initalRouletteAngle;
+    rouletteAngle = angle % 360;
+		rouletteContainer.style.transform = `rotateZ(${rouletteAngle}deg)`;
+		const speedIncrease = (millisecondTimeout * speed) / (1000 * duration);
+		rouletteT += speedIncrease;
+		
+		if (actualDuration && rouletteT >= 1) {
+			stopRouletteRotation();
+      callback && callback();
+		}
+  }, millisecondTimeout);
+}
+
+function stopRouletteRotation() {
+	if (rouletteRotationInterval !== null) {
+		clearInterval(rouletteRotationInterval);
+	}
+}
+
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
@@ -38,9 +91,19 @@ function disableButton(button) {
 }
 
 function rollRoulette() {
-	console.log("now");
-	let mapsToRoll = getMapsToRoll(selectedTiers, goldenList);
-	getRandomMap(mapsToRoll);
+	startRouletteRotation(
+    20,
+    1,
+    () => {
+      const wheelIndex = getCurrentWheelIndex();
+      if (wheelIndex < challengesOnWheel.length) {
+        console.log(`Rolled ${challengesOnWheel[wheelIndex].mapName}`);
+      } else {
+        console.log("challenge not added");
+      }
+    },
+		easeOutSine
+  );
 }
 
 function getRandomMap(mapsToRoll) {
@@ -79,18 +142,28 @@ function getMapsToRoll(tiers, tierSortedMaps) {
 
 function getGoldenListFromCampaigns(campaigns) {
 	const list = {
-		"Tier 0": [],
-		"Tier 1": [],
-		"Tier 2": [],
-		"Tier 3": [],
-		"Tier 4": [],
-		"Tier 5": [],
-		"Tier 6": [],
-		"Tier 7": [],
-		"Standard": [],
-		"Undetermined": [],
-		"Trivial": [],
-	}
+    "Tier 1": [],
+    "Tier 2": [],
+    "Tier 3": [],
+    "Tier 4": [],
+    "Tier 5": [],
+    "Tier 6": [],
+    "Tier 7": [],
+    "Tier 8": [],
+    "Tier 9": [],
+    "Tier 10": [],
+    "Tier 11": [],
+    "Tier 12": [],
+    "Tier 13": [],
+    "Tier 14": [],
+    "Tier 15": [],
+    "Tier 16": [],
+    "Tier 17": [],
+    "Tier 18": [],
+    "Tier 19": [],
+    "Untiered": [],
+    "Undetermined": [],
+  };
 	campaigns.forEach(campaign => {
 		campaign.maps.forEach(map => {
 			map.challenges.forEach(challenge => {
@@ -162,7 +235,6 @@ function setTierSortedProgress(progress, selectedTiers) {
 
 let chunkTimeoutIDs = [];
 const tierSortedProgress = {
-  "Tier 0": 0,
   "Tier 1": 0,
   "Tier 2": 0,
   "Tier 3": 0,
@@ -170,18 +242,31 @@ const tierSortedProgress = {
   "Tier 5": 0,
   "Tier 6": 0,
   "Tier 7": 0,
-  "Standard": 0,
+  "Tier 8": 0,
+  "Tier 9": 0,
+  "Tier 10": 0,
+  "Tier 11": 0,
+  "Tier 12": 0,
+  "Tier 13": 0,
+  "Tier 14": 0,
+  "Tier 15": 0,
+  "Tier 16": 0,
+  "Tier 17": 0,
+  "Tier 18": 0,
+  "Tier 19": 0,
+  "Untiered": 0,
   "Undetermined": 0,
-  "Trivial": 0,
 };
 function addMapChunksToRoulette(maps, selectedTiers, challengeCount) {
 	const chunk = 20;
 	let count = 0;
+	challengesOnWheel = [];
   (function loop(i) {
     if (i >= maps.length) return; // all done
     maps.slice(i, i + chunk).forEach((map) => {
 			for (let j = 0; j < map.challenges.length; j++) {
 				const challenge = map.challenges[j];
+				challenge.mapName = map.name;
         const p = document.createElement("p");
         p.innerHTML =
           map.name +
@@ -191,6 +276,7 @@ function addMapChunksToRoulette(maps, selectedTiers, challengeCount) {
           " ";
         // + challenge.difficulty.name;
 
+				challengesOnWheel.push(challenge);
         rouletteTextContainer.appendChild(p);
         p.style = "--nth-child: " + count;
         resizeFontToFit(p, 240 - 70, (1.8 * Math.PI * 240) / challengeCount); // 240 is remToPx(15)
@@ -217,47 +303,6 @@ function addMapsToRoulette() {
     }
   }
 
-	// let maps = [
-  //   {
-  //     name: "Waterbear Mountain",
-  //     challenges: [
-  //       {
-  //         requires_fc: true,
-  //         label: null,
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: "Pinball purgatory",
-  //     challenges: [
-  //       {
-  //         requires_fc: false,
-  //         label: null,
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: "GMHS",
-  //     challenges: [
-  //       {
-  //         requires_fc: false,
-  //         label: null,
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: "LXVI - Venus",
-  //     challenges: [
-  //       {
-  //         requires_fc: false,
-  //         label: null,
-  //         challenge: {
-  //           label: "start - end",
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ];
 	const maps = getMapsToRoll(selectedTiers, goldenList);
 
 	let challengeCount = 0;
@@ -265,13 +310,37 @@ function addMapsToRoulette() {
 		challengeCount += map.challenges.length
 	});
 
+	console.log(maps);
 	addMapChunksToRoulette(maps, selectedTiers, challengeCount);
 
-	console.log(challengeCount !== 0 ? 360 / challengeCount : 10);
-	rouletteWheel.style =
-    "--childRotation: " +
-    (challengeCount !== 0 ? 360 / challengeCount : 10) +
-    "deg";
+	childRotationAngle = challengeCount !== 0 ? 360 / challengeCount : 10;
+	console.log(childRotationAngle);
+	rouletteWheel.style = "--childRotation: " + childRotationAngle + "deg";
+}
+
+function startSpinCheck() {
+	let prevIndex = null;
+	setInterval(() => {
+		const wheelIndex = getCurrentWheelIndex();
+		if (prevIndex !== null && prevIndex !== wheelIndex) {
+      if (wheelIndex < challengesOnWheel.length) {
+        console.log(challengesOnWheel[wheelIndex].mapName);
+      } else {
+        console.log("challenge not added");
+			}
+			clickAudio.play();
+    }
+		prevIndex = wheelIndex;
+	})
+}
+
+function getCurrentWheelIndex() {
+	const a = rouletteAngle - childRotationAngle / 2;
+	const b = (360 - a);
+	const c = b / childRotationAngle
+	const d = Math.floor(c);
+	const wheelIndex = d % (360 / childRotationAngle);
+	return wheelIndex;
 }
 
 //--------------------
@@ -291,11 +360,40 @@ const mapTierObject = document.getElementById("mapTier");
 
 const tierSortedLoadingBars = addTierSortedLoadingBars();
 
+class ClickAudio {
+  source = "mixkit-classic-click-1117.wav";
+  currentIndex = 0;
+  instances = [];
+
+	constructor() {
+		const audio = new Audio(this.source);
+		audio.preload = "auto";
+		this.instances.push(audio);
+		for (let index = 0; index < 5; index++) {
+			this.instances.push(audio.cloneNode(true));
+		}
+	}
+
+	play() {
+		this.instances[this.currentIndex++].play();
+    if (this.currentIndex >= this.instances.length) {
+      this.currentIndex = 0;
+    }
+	}
+}
+const clickAudio = new ClickAudio();
+
 let goldenList = null;
 let campaignList = [];
 let selectedTiers = [];
+let challengesOnWheel = [];
+
+let rouletteAngle = 0;
+let childRotationAngle;
 
 //----------------------
+
+startRouletteRotation();
 
 setTierDropdownPopoverWidth();
 addEventListener("resize", (_) => setTierDropdownPopoverWidth());
@@ -311,6 +409,7 @@ request("https://goldberries.net/api/lists/golden-list?archived=true&arbitrary=t
 		goldenList = getGoldenListFromCampaigns(campaignList);
 		rouletteWheel.classList.add("spinnerToRoulette");
 		addMapsToRoulette();
+		startSpinCheck();
 	})
 	.catch(err => {
 		console.error(err);
