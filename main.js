@@ -171,6 +171,10 @@ function getGoldenListFromCampaigns(campaigns) {
 				const mapClone = structuredClone(map);
 				mapClone.challenges = [challenge];
 				mapClone.campaignName = campaign.name;
+				if (tierName.startsWith("Tier")) {
+					console.log(tierName);
+					console.log(mapClone);
+				}
 				list[tierName].push(mapClone);
 			})
 		})
@@ -403,14 +407,16 @@ rouletteWheel.addEventListener("animationend", (event) => {
   }
 });
 
-request("https://goldberries.net/api/lists/golden-list?archived=true&arbitrary=true")
-	.then(value => {
-		campaignList = value;
-		goldenList = getGoldenListFromCampaigns(campaignList);
-		rouletteWheel.classList.add("spinnerToRoulette");
-		addMapsToRoulette();
-		startSpinCheck();
-	})
-	.catch(err => {
-		console.error(err);
-	});
+request(
+  "https://goldberries.net/api/lists/golden-list"
+)
+  .then((value) => {
+    campaignList = value;
+    goldenList = getGoldenListFromCampaigns(campaignList);
+    rouletteWheel.classList.add("spinnerToRoulette");
+    addMapsToRoulette();
+    startSpinCheck();
+  })
+  .catch((err) => {
+    console.error(err);
+  });
