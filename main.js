@@ -171,10 +171,6 @@ function getGoldenListFromCampaigns(campaigns) {
 				const mapClone = structuredClone(map);
 				mapClone.challenges = [challenge];
 				mapClone.campaignName = campaign.name;
-				if (tierName.startsWith("Tier")) {
-					console.log(tierName);
-					console.log(mapClone);
-				}
 				list[tierName].push(mapClone);
 			})
 		})
